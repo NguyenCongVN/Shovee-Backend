@@ -35,6 +35,7 @@ exports.findById = async (req, res) => {
 }
 
 exports.create = async (req, res) => {
+    console.log(req);
     const { name } = req.body
 
     if (!name) {

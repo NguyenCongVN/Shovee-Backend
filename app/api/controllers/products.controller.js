@@ -63,7 +63,8 @@ exports.findById = async (req, res) => {
 
 exports.create = async (req, res) => {
     const { name, price, category, city, description, brand, stok } = req.body
-    //const seller = req.user._id
+    console.log(req.body);
+    // const seller = req.user._id
     let images
     
     const seller = await userDetailsModel.findOne({user: req.user})
@@ -71,6 +72,7 @@ exports.create = async (req, res) => {
                 .catch(err => res.status(500).json({
                     message: err
                 }))
+    
     console.log(seller)
     if(req.files.length > 0) {
         images = await _doMultipleUpload(req)

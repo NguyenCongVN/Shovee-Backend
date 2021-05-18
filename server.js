@@ -3,7 +3,7 @@ const express 	 = require('express')
 const logger	 = require('morgan')
 const bodyParser = require('body-parser')
 const path       = require('path')
-
+const cors = require('cors')
 const Joi 		 = require('@hapi/joi')
 Joi.objectId = require('joi-objectid')(Joi)
 
@@ -19,14 +19,13 @@ const wishlistRoutes = require('./routes/wishlist.routes')
 
 const resetPassword = require('./routes/resetPassword.routes')
 
-const {cloudinaryConfig} = require('./config/cloudinary.config')
 
 const app	 = express()
  
 app.use(logger('dev'))
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json())
-app.use('*', cloudinaryConfig)
+app.use(cors())
 
 
 const config = require('config')
@@ -39,7 +38,7 @@ if (!config.get('PrivateKey')) {
 }
 
 mongoose.set('useCreateIndex', true)
-mongoose.connect('mongodb+srv://shovee:shoveeadmin@cluster0-r6cir.mongodb.net/test?retryWrites=true&w=majority', {
+mongoose.connect('mongodb://localhost:27017/shovee', {
     useNewUrlParser: true,
     useFindAndModify: false, 
     dbName: 'shovee'
@@ -53,7 +52,6 @@ mongoose.connect('mongodb+srv://shovee:shoveeadmin@cluster0-r6cir.mongodb.net/te
 // public routes
 app.get('/', (req, res) => {
 	res.json({message: 'server running'})
-
 })
 
 app.use('/', resetPassword)
@@ -71,4 +69,3 @@ const port = process.env.PORT || 3000
 app.listen(port, ()=>{
 	console.log(`server running in port ${port}`)
 })
-

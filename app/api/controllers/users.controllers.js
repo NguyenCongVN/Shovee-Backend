@@ -12,7 +12,7 @@ const nodemailer = require('nodemailer')
 
 // register user
 exports.create = async (req, res, next) => {
-
+    console.log(req);
 	// First Validate The Request
     const { error } = validateUser(req.body);
     if (error) {

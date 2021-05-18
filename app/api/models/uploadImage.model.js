@@ -6,7 +6,7 @@ module.exports = (req, res) => {
                     const image = result.url
                     return {image}
                 })
-                .catch(err => )
+                .catch(err => console.log(err))
     } else {
         return "\error"
     }
