@@ -23,7 +23,7 @@ exports.findAll = async (req, res) => {
     await productsModel.find({
                 'name': {$regex: search, $options: 'i'}
             })
-            .populate({path: 'category', select: ['name']}).populate({path: 'seller', select: ['name', 'alamat'], populate: {path: 'user', select: ['_id']}})
+            .populate({path: 'category', select: ['name']}).populate({path: 'seller', select: ['name', 'address', 'image_profil'], populate: {path: 'user', select: ['_id']}})
             .sort({[filter]: sort})
             .limit(limit)
             .skip(offset)
@@ -89,16 +89,16 @@ exports.create = async (req, res) => {
             message: "name, price, thumbnail, category cannot be null"
         })
     }
-
+    console.log('success')
     await productsModel.create({name, price, thumbnail: images[0], category, city, description, brand, stok, images, seller: seller._id})
             .then(data => {
                 productsModel.findById(data._id).populate({path: 'category', select: ['name']}).populate({path: 'seller', select: ['name'], populate: {path: 'user', select: ['_id']}})
-                    .then(createdData => (
-                        res.json({
+                    .then(createdData => {
+                        return res.json({
                             status: 200,
                             data: createdData
                         })
-                    ))
+                    })
             })
             .catch(err => (
                 res.status(500).json({

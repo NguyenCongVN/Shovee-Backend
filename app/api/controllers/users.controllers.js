@@ -9,10 +9,11 @@ const config        = require('config')
 
 const crypto    = require('crypto')
 const nodemailer = require('nodemailer')
+const {_doMultipleUpload} = require('../middleware/upload.middleware')
 
 // register user
 exports.create = async (req, res, next) => {
-    console.log(req);
+    console.log(req.body)
 	// First Validate The Request
     const { error } = validateUser(req.body);
     if (error) {
@@ -20,6 +21,13 @@ exports.create = async (req, res, next) => {
         	status: 'failed',
         	message: `${error.details[0].message}`
         })
+    }
+
+    if(req.files.length > 0) {
+        images = await _doMultipleUpload(req)
+        console.log('iyes')
+    } else {
+        images = ["https://res.cloudinary.com/sobat-balkon/image/upload/v1562715024/sample.jpg"]
     }
 
     // Check if this user already exisits
@@ -34,7 +42,8 @@ exports.create = async (req, res, next) => {
 			email: req.body.email,
 			username: req.body.username,
 			phone: req.body.phone,
-			password: req.body.password
+			password: req.body.password,
+            photoUrl : images[0]
 		})
 
 		await user.save()
@@ -58,16 +67,18 @@ exports.create = async (req, res, next) => {
                     name: '',
                     gender: 'L',
                     tanggal_lahir: '',
-                    image_profil: '',
+                    image_profil: images[0],
                     alamat: address
                 })
+
+                console.log(dataRegister)
 
                 userDetail.save()
 
 				res.json({
 					status: 'success',
 					message: "User added successfully",
-					data: _.pick(dataRegister, ['_id', 'email', 'username', 'phone']),
+					data: _.pick(dataRegister, ['_id', 'email', 'username', 'phone' ,'photoUrl' ]),
                     token: token
 				})
 			})
@@ -83,7 +94,7 @@ exports.create = async (req, res, next) => {
 
 //login user
 exports.auth = async (req, res, next) => {
-
+    console.log(req.body)
 	// First Validate The HTTP Request
     const { error } = validateLogin(req.body);
     if (error) {
@@ -123,10 +134,9 @@ exports.auth = async (req, res, next) => {
 
     res.json({
     	status: 'success',
-    	data: _.pick(user, ['_id', 'email', 'username', 'phone']),
+    	data: _.pick(user, ['_id', 'email', 'username', 'phone', 'photoUrl']),
     	token: token
     })
-
 } 
 
 exports.forgetPassword = async (req, res) => {

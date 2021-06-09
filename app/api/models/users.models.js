@@ -37,7 +37,10 @@ const UserSchema = new Schema({
   		required: true,
   		minlength: 6,
         maxlength: 1024
- 	}
+ 	},
+	 photoUrl : {
+		 type : String 
+	 }
 }, {
     timestamps: true
 })
@@ -60,7 +63,8 @@ function validateUser(user) {
         phone: Joi.required(),
         email: Joi.string().min(5).max(255).required().email(),
         password: Joi.string().min(5).max(255).required(),
-        password_confirmation: Joi.any().valid(Joi.ref('password')).required().options({ language: { any: { allowOnly: 'must match password' } } })
+        password_confirmation: Joi.any().valid(Joi.ref('password')).required().options({ language: { any: { allowOnly: 'must match password' } } }),
+		files : Joi.any()
     };
     return Joi.validate(user, schema);
 }

@@ -27,10 +27,10 @@ exports.find = async (req, res) => {
 }
 
 exports.setUserDetail = async (req, res) => {
+	console.log(req)
 	let user = req.user
 	let images
 
-	// res.json(req.body);
 	if(req.files && req.files.length > 0) {
         images = await _doMultipleUpload(req)
     	req.body.image_profil = images[0];
@@ -40,15 +40,15 @@ exports.setUserDetail = async (req, res) => {
     await userDetailModel.findOne({user})
 	.then(data => {
 	    address = {
-	    	provinsi: req.body.provinsi || data.alamat.provinsi || '',
-	    	kab: req.body.kab || data.alamat.kab || '',
-	    	kec: req.body.kec || data.alamat.kec || '',
-	    	alamat_lengkap: req.body.alamat_lengkap || data.alamat.alamat_lengkap || '',
-	    	pos: req.body.pos || data.alamat.pos || ''
+	    	province: req.body.province || data.address.province || '',
+	    	city: req.body.city || data.address.city || '',
+	    	district: req.body.district || data.address.district || '',
+	    	full_address: req.body.full_address || data.address.full_address || '',
+	    	zip_code: req.body.zip_code || data.address.zip_code || ''
 	    }
 	})
 
-    req.body.alamat = address
+    req.body.address = address
 
 	await userDetailModel.findOneAndUpdate({user}, req.body)
 	.then(data => {
