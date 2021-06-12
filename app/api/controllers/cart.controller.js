@@ -5,7 +5,7 @@ const cartModel = require('../models/cart.model')
 exports.findAllUserCart = async (req, res) => {
     await cartModel.find({
         user: req.user._id
-    }).populate({path:'user', select: ['_id']}).populate('product')
+    }).populate({path:'user', select: ['_id']}).populate('product').populate({path : 'product' , populate : 'seller' })
             .then(data => (
                 res.json({
                     status: 200,
@@ -32,7 +32,7 @@ exports.create = async (req, res) => {
 
     await cartModel.create({ user, product })
             .then(data => {
-                cartModel.findById(data._id).populate('user').populate('product')
+                cartModel.findById(data._id).populate('user').populate('product').populate({path : 'product' , populate : 'seller' })
                     .then(createdData => (
                         res.json({
                             status: 200,

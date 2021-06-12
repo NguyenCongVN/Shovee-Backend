@@ -5,7 +5,7 @@ const wishlistModel = require('../models/wishlist.model')
 exports.findAllUserWishlist = async (req, res) => {
     await wishlistModel.find({
         user: req.user._id
-    }).populate({path:'user', select: ['_id']}).populate('product')
+    }).populate({path:'user', select: ['_id']}).populate('product').populate({path : 'product' , populate : 'seller'})
             .then(data => (
                 res.json({
                     status: 200,
@@ -30,7 +30,20 @@ exports.create = async (req, res) => {
         })
     }
 
-    await wishlistModel.create({ user, product })
+    await wishlistModel.find({user : {_id : user} ,product : { _id : product}} , async function(err , foundList){
+        if(foundList.length !== 0)
+        {
+            await wishlistModel.deleteMany({user : {_id : user} ,product : { _id : product}} , function(err){
+                if(err)
+                {
+                    return res.status(500).json({
+                        status: 500,
+                        message: err.message || 'same error'
+                    })
+                }
+            })
+        }
+        await wishlistModel.create({ user, product })
             .then(data => {
                 wishlistModel.findById(data._id).populate('user').populate('product')
                     .then(createdData => (
@@ -46,6 +59,7 @@ exports.create = async (req, res) => {
                     message: err.message || 'same error'
                 })
             })
+    })
 }
 
 exports.delete = async (req, res) => {
