@@ -10,6 +10,7 @@ const auth = require('../app/api/middleware/auth')
 
 router.get('/', productsController.findAll)
 router.get('/:id', productsController.findById)
+router.get('/user/:id', productsController.findAllProductByUser)
 router.post('/', auth, multerUploads, productsController.create)
 router.patch('/:id', auth, productsController.update)
 router.delete('/:id', auth, productsController.delete)

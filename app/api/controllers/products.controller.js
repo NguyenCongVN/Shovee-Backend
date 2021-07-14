@@ -45,6 +45,22 @@ exports.findAll = async (req, res) => {
             })
 }
 
+exports.findAllProductByUser = async (req , res) => {
+    await productsModel.find({ seller :req.params.id})
+            .then(data => (
+                res.json({
+                    status: 200,
+                    data
+                })
+            ))
+            .catch(err => (     
+                res.status(500).json({
+                    status: 500,
+                    message: err.message || 'same error'
+                })
+            ))
+}
+
 exports.findById = async (req, res) => {
     await productsModel.findById(req.params.id)
             .then(data => (
@@ -100,12 +116,13 @@ exports.create = async (req, res) => {
                         })
                     })
             })
-            .catch(err => (
-                res.status(500).json({
+            .catch(err => {
+                console.log(err)
+                return res.status(500).json({
                     status: 500,
                     message: err.message || 'same error'
                 })
-            ))
+            })
 }
 
 exports.update = async (req, res) => {
